@@ -1,0 +1,6 @@
+build/
+setup.bash
+.cache/
+.ccls
+.ccls-cache/
+.vscode/

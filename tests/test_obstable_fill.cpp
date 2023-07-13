@@ -67,7 +67,7 @@ struct TrueFalseOracle : public Oracle<IntervalPredicate<int>, int> {
 
 };
 
-
+/*
 struct TableOracle : public Oracle<IntervalPredicate<int>, int> {
 
     int i=0;
@@ -172,6 +172,69 @@ struct TableOracle : public Oracle<IntervalPredicate<int>, int> {
     }
 
 };
+*/
+
+
+std::vector<word<int>> ctrexs = {
+
+    word<int>(51),
+    word<int>(101),
+    word<int>({51,0,0}),
+    word<int>({51,21,0}),
+    word<int>({51,0,21})
+
+};
+
+std::vector<std::pair<word<int>, int> > table = {
+
+    // Epsilon
+    {word<int>::epsilon()  , 1},
+    {word<int>(51)         , 0},
+    {word<int>({51,0})     , 0},
+    {word<int>({51,21})    , 0},
+
+    {word<int>(0)          , 1},
+    {word<int>(101)        , 1},
+    {word<int>({51,0,0})   , 1},
+    {word<int>({51,21,0})  , 0},
+    {word<int>({0,0})      , 1},
+    {word<int>({51,0,0,0}) , 1},
+    {word<int>({51,21,0,0}), 0},
+    {word<int>({51,0,21})  , 0},
+
+    // 0
+    {word<int>(0)            , 1},
+    {word<int>({51,0})       , 0},
+    {word<int>({51,0,0})     , 1},
+    {word<int>({51,21,0})    , 0},
+
+    {word<int>({0,0})        , 1},
+    {word<int>({101,0})      , 1},
+    {word<int>({51,0,0,0})   , 1},
+    {word<int>({51,21,0,0})  , 0},
+    {word<int>({0,0,0})      , 1},
+    {word<int>({51,0,0,0,0}) , 1},
+    {word<int>({51,21,0,0,0}), 0},
+    {word<int>({51,0,21,0})  , 0},
+
+    // 0,0
+    {word<int>({0,0})          , 1},
+    {word<int>({51,0,0})       , 1},
+    {word<int>({51,0,0,0})     , 1},
+    {word<int>({51,21,0,0})    , 0},
+
+    {word<int>({0,0,0})        , 1},
+    {word<int>({101,0,0})      , 1},
+    {word<int>({51,0,0,0,0})   , 1},
+    {word<int>({51,21,0,0,0})  , 0},
+    {word<int>({0,0,0,0})      , 1},
+    {word<int>({51,0,0,0,0,0}) , 1},
+    {word<int>({51,21,0,0,0,0}), 0},
+    {word<int>({51,0,21,0,0})  , 0},
+
+
+};
+
 
 
 TEST(TestObsTable, BasicTest) {
@@ -386,7 +449,7 @@ TEST(TestObsTable, MehodClose) {
 TEST(TestObsTable, MakeConsistent) {
 
     IntAlphabet A;
-    TableOracle O;
+    TableOracle<IntervalPredicate<int>, int> O(table, ctrexs);
     IntervalAlgebra<int> I = IntervalAlgebra<int>();
     ObsTable<IntervalPredicate<int>, int> T(&A, &O, &I);
 
@@ -406,7 +469,7 @@ TEST(TestObsTable, MakeConsistent) {
 TEST(TestObsTable, GetAllWordsWithPrefix) {
 
     IntAlphabet A;
-    TableOracle O;
+    TableOracle<IntervalPredicate<int>, int> O(table, ctrexs);
     IntervalAlgebra<int> I = IntervalAlgebra<int>();
     ObsTable<IntervalPredicate<int>, int> T(&A, &O, &I);
 
@@ -434,7 +497,7 @@ TEST(TestObsTable, Learn) {
 
 
     IntAlphabet A;
-    TableOracle O;
+    TableOracle<IntervalPredicate<int>, int> O(table, ctrexs);
     IntervalAlgebra<int> I = IntervalAlgebra<int>(0, false, std::numeric_limits<int>::max(), true);
     ObsTable<IntervalPredicate<int>, int> T(&A, &O, &I);
 

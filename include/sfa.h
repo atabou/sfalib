@@ -5,6 +5,9 @@
     #include "boolean_algebra.h"
     #include <vector>
     #include <string>
+    #include <unordered_map>
+    #include <unordered_set>
+    #include <queue>
 
     template <typename pred, typename domain> struct sfa {
 
@@ -15,7 +18,11 @@
         std::vector<int> final_states;
         std::vector<std::vector<int>> transitions;
 
+
+
         sfa() {}
+
+
 
         sfa(std::vector<std::string> states, BooleanAlgebra<pred, domain>* ba, std::vector<pred> predicates, int initial_state, std::vector<int> final_states, std::vector<std::vector<int>> transitions) 
             : states(states)
@@ -24,6 +31,7 @@
             , initial_state(initial_state)
             , final_states(final_states)
             , transitions(transitions) {}
+
 
 
         /**
@@ -63,6 +71,7 @@
         }
 
 
+
         friend std::ostream& operator<<(std::ostream& os, const sfa<pred, domain>& automaton) {
 
             // Print the automaton as a graphviz dot string
@@ -73,12 +82,12 @@
             os << "    init [label=\"\", shape=none,height=.0,width=.0];" << std::endl;
 
             for(int i=0; i<automaton.states.size(); i++) {
-                // Determine if automaton state is final.
-                // If so, add a double circle around the state.
-                // Otherwise, add a single circle.
+                
                 bool is_final = std::find(automaton.final_states.begin(), automaton.final_states.end(), i) != automaton.final_states.end();
                 
-                if(is_final) os << "    " << i << " [label=\"" << automaton.states[i] << "\", shape=doublecircle];" << std::endl;
+                // If is a final state, add a double circle around the state.
+                if(is_final) os << "    " << i << " [label=\"" << automaton.states[i] << "\", shape=doublecircle];" << std::endl; 
+                // Otherwise, add a single circle.
                 else os << "    " << i << " [label=\"" << automaton.states[i] << "\"];" << std::endl;
 
             }
@@ -99,17 +108,9 @@
 
             os << "}" << std::endl;
 
-            
-
             return os;
 
-
-
-        }
-
-
-        
-
+        } 
 
     };
 

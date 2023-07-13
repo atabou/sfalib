@@ -4,17 +4,17 @@ FIND_PROGRAM(GENHTML_PATH genhtml)
 
 
 IF(NOT GCOV_PATH)
-    MESSAGE(FATAL_ERROR "gcov not found")
+    MESSAGE(WARNING "gcov not found")
 ENDIF()
 
 
 IF(NOT LCOV_PATH)
-    MESSAGE(FATAL_ERROR "lcov not found! Aborting")
+    MESSAGE(WARNING "lcov not found! Aborting")
 ENDIF()
 
 
 IF(NOT GENHTML_PATH)
-    MESSAGE(FATAL_ERROR "genhtml not found! Aborting...")
+    MESSAGE(WARNING "genhtml not found! Aborting...")
 ENDIF()
 
 
@@ -41,7 +41,7 @@ IF(CMAKE_COMPILER_IS_GNUCXX)
 
     SET(CMAKE_CXX_FLAGS_COVERAGE
         "-pg -O0 --coverage -fprofile-arcs -ftest-coverage"
-        CACHE STRING "Fags used by C++ compiler during coverage builds."
+        CACHE STRING "Flags used by C++ compiler during coverage builds."
         FORCE)
 
 
@@ -120,9 +120,6 @@ ELSEIF(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
             COMMAND ;
             COMMENT "Open ./${_outputname}/index.html in your browser to view the coverage report."
         )
-
-
-
 
     ENDFUNCTION()
 

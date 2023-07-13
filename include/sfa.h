@@ -60,28 +60,6 @@
 
             }
 
-            // print predicests
-            
-            for(int i=0; i < predicates.size(); i++) {
-
-                std::cout << i << " " << predicates[i] << std::endl;
-
-            }
-
-            // Print transition table.
-            
-            for(int i=0; i < transitions.size(); i++) {
-
-                for(int j=0; j < predicates.size(); j++) {
-
-                    std::cout << transitions[i][j] << " ";
-
-                }
-
-                std::cout << std::endl;
-
-            }
-
         }
 
 

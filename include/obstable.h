@@ -23,7 +23,7 @@
 
         const Alphabet<domain>* alpha;
         BooleanAlgebra<pred, domain>* ba;
-        Oracle<domain>* oracle;
+        Oracle<pred, domain>* oracle;
 
         std::vector< word<domain> > S;   /** Prefixes in the alphabet */
         std::vector< word<domain> > R;   /** Suffixes in the alphabet */
@@ -36,7 +36,7 @@
         std::vector<int> unfilled_cols; /** List of unfilled columns in Rt */
 
 
-        ObsTable(const Alphabet<domain>* alpha, Oracle<domain>* oracle, BooleanAlgebra<pred, domain>* ba) : alpha(alpha), oracle(oracle), ba(ba) {
+        ObsTable(const Alphabet<domain>* alpha, Oracle<pred, domain>* oracle, BooleanAlgebra<pred, domain>* ba) : alpha(alpha), oracle(oracle), ba(ba) {
 
             /******************************************************************
              * Initialize S and E.
@@ -59,57 +59,84 @@
         }
 
 
-        void learn() {
+        sfa<pred, domain> learn() {
 
-            /******************************************************************
-             * Initialize the table with an initial membership query.
-             *****************************************************************/
+            sfa<pred, domain> conjecture;
 
-            fill_table();
+            word<domain> ctrex;
 
-            /******************************************************************
-             * Make the table consistent and closed.
-             *****************************************************************/
+            while(true) {
 
-            bool inconsistent = true; 
-            bool unclosed = true; 
+                /******************************************************************
+                 * Initialize the table with an initial membership query.
+                 *****************************************************************/
 
-            do {
+                fill_table();
 
-                if(inconsistent) {
+                /******************************************************************
+                 * Make the table consistent and closed.
+                 *****************************************************************/
 
-                    inconsistent = make_consistent();
+                bool inconsistent = true; 
+                bool unclosed = true; 
+
+                do {
 
                     if(inconsistent) {
 
-                        unclosed = true;
+                        inconsistent = make_consistent();
+
+                        if(inconsistent) {
+
+                            unclosed = true;
+
+                        }
 
                     }
-                
-                }
-
-                if(unclosed) {
-
-                    unclosed = close();
 
                     if(unclosed) {
-                        
-                        fill_table();
 
-                        inconsistent = true;
+                        unclosed = close();
+
+                        if(unclosed) {
+
+                            fill_table();
+
+                            inconsistent = true;
+
+                        }
 
                     }
-                
+
+
+                } while (inconsistent || unclosed);
+
+                /******************************************************************
+                 * Build a conjecture from the table.
+                 *****************************************************************/
+
+                conjecture = this->make_conjecture();
+
+                /******************************************************************
+                 * Check if the conjecture is correct.
+                 *****************************************************************/
+
+                if(oracle->equivalence(conjecture, ctrex)) {
+
+                    break;
+
                 }
 
+                this->counter_example(ctrex);
 
-            } while (inconsistent || unclosed);
+            }
 
+            return conjecture;
 
         }
 
 
-        void counter_example(const word<domain>& w, int value) {
+        void counter_example(const word<domain>& w) {
 
             std::vector<word<domain> > prefixes;
 

@@ -3,6 +3,7 @@
 
 #include "boolean_algebra.h"
 #include "obstable.h"
+#include "oracle.h"
 #include "predicate.h"
 
 
@@ -12,7 +13,7 @@ struct IntAlphabet : public Alphabet<int> {
 
 };
 
-struct TrueOracle : public Oracle<int> {
+struct TrueOracle : public Oracle<IntervalPredicate<int>, int> {
 
     std::vector<int> membership(const std::vector<word<int> >& w) override { 
 
@@ -28,9 +29,16 @@ struct TrueOracle : public Oracle<int> {
 
     }
 
+
+    bool equivalence(sfa<IntervalPredicate<int>, int> hypothesis, word<int>& ctrex) override {
+
+        return true;
+
+    }
+
 };
 
-struct TrueFalseOracle : public Oracle<int> {
+struct TrueFalseOracle : public Oracle<IntervalPredicate<int>, int> {
 
     size_t x = 0;
 
@@ -51,10 +59,18 @@ struct TrueFalseOracle : public Oracle<int> {
 
     }
 
+    bool equivalence(sfa<IntervalPredicate<int>, int> hypothesis, word<int>& ctrex) override {
+
+        return true;
+
+    }
+
 };
 
 
-struct TableOracle : public Oracle<int> {
+struct TableOracle : public Oracle<IntervalPredicate<int>, int> {
+
+    int i=0;
 
     std::vector<int> membership(const std::vector<word<int> >& w) override { 
 
@@ -126,6 +142,32 @@ struct TableOracle : public Oracle<int> {
         }
 
         return v;
+
+    }
+
+    bool equivalence(sfa<IntervalPredicate<int>, int> hypothesis, word<int>& ctrex) override {
+
+        std::vector<word<int>> ctrexs = {
+
+            word<int>(51),
+            word<int>(101),
+            word<int>({51,0,0}),
+            word<int>({51,21,0}),
+            word<int>({51,0,21})
+
+        };
+
+        if(i < 5) {
+
+            ctrex = ctrexs[i];
+            i++;
+            return false;
+        
+        } else {
+
+            return true; 
+
+        }
 
     }
 
@@ -396,40 +438,6 @@ TEST(TestObsTable, Learn) {
     IntervalAlgebra<int> I = IntervalAlgebra<int>(0, false, std::numeric_limits<int>::max(), true);
     ObsTable<IntervalPredicate<int>, int> T(&A, &O, &I);
 
-    T.learn();
-
-    T.counter_example(word<int>(51), 0);
-
-    T.learn();
-
-    T.counter_example(word<int>(101), 1);
-
-    T.learn();
-
-    T.counter_example(word<int>({51,0,0}), 0);
-
-    T.fill_table();
-
-    T.learn();
-
-    T.fill_table();
-
-    T.counter_example(word<int>({51,21,0}), 0);
-
-    T.fill_table();
-
-    T.learn();
-
-    T.fill_table();
-
-    T.counter_example(word<int>({51,0,21}), 0);
-
-    T.learn();
-
-    T.fill_table();
-
-    std::cout << T << std::endl;
-
-    std::cout << T.make_conjecture() << std::endl;
+    std::cout << T.learn() << std::endl;
 
 }

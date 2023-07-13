@@ -10,7 +10,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 # set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -Werror -Wno-unused-parameter")
 # set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wpedantic -Wno-unused-parameter -Wno-sign-compare")
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -O0 -pg -fprofile-instr-generate -fcoverage-mapping ${CMAKE_CXX_FLAGS_DEBUG}")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -Wno-unused-parameter -Wno-sign-compare ${CMAKE_CXX_FLAGS_DEBUG}")
 
 # set(SOURCES 
     # src/
